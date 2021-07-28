@@ -1,0 +1,18 @@
+@maxWidth:1920/1.4px;     //屏幕宽度
+@mainRatio:0.9;  //和0.8倍@maxWidth的比例关系
+@mainWidth:@maxWidth*0.8*@mainRatio;   //主体宽度
+//======================
+//       公共样式
+//======================
+//清除浮动
+.clear-fix:after,
+.clear-fix:before {
+  content: "";
+  display: block;
+  clear: both;
+}
+//主要区域公共样式
+.mainArea(){
+  margin-left: ((@maxWidth)-(@mainWidth))*0.5;
+  width: @mainWidth;
+}
