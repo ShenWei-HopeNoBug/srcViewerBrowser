@@ -1,8 +1,12 @@
 <template>
   <div id="list-container" class="clear-fix">
+    <div class="spaceBar"></div>
     <div class="bar"></div>
+    <div class="spaceBar"></div>
     <ImgList/>
+    <div class="spaceBar"></div>
     <div class="bar"></div>
+    <div class="spaceBar"></div>
   </div>
 </template>
 
@@ -11,7 +15,7 @@
 
   export default {
     name: "MyList",
-    components:{
+    components: {
       ImgList,
     },
     data() {
@@ -34,36 +38,12 @@
     .mainArea();
     background-color: #FAEACE;
 
-    .bar {
-      float: left;
-      width: 100%;
-      height: 10px;
-      margin-top: 16px;
-      margin-bottom: 16px;
-      background-color: indianred;
+    .spaceBar {
+      .spaceOptions(@h:16px,@backgroundColor: #FAEACE);
     }
 
-    #images {
-      width: 100%;
-      margin: 0 auto;
-
-      li {
-        float: left;
-        width: @imgWidth;
-        height: $width;
-        margin-left: @imgLeftMargin;
-        margin-top: @imgLeftMargin/2;
-        margin-bottom: @imgLeftMargin/2;
-        box-sizing: border-box;
-        border: rgba(0, 0, 0, 0.6) solid 2px;
-        border-radius: 6px;
-        overflow: hidden;
-
-        img {
-          width: 100%;
-          height: 100%;
-        }
-      }
+    .bar {
+      .spaceOptions();
     }
 
     #videos {

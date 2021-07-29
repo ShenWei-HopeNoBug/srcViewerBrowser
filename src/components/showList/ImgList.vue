@@ -1,19 +1,28 @@
 <template>
-  <ul id="images" @click="imgView">
-    <li v-for="(pathObj,index) in pathList" :key="'img_'+index">
-      <img :src="pathObj.path"
-           :alt="pathObj.alt"
-           :title="pathObj.title"
-           :id="index"
-           @load="loadOn"
-           @error="loadErr"
-      >
-    </li>
-  </ul>
+  <div>
+    <div class="clear-fix icon-container">
+      <div @click="changeModel">
+        <span class="iconfont icon-picture-fill" :class="{'icon-active':!galleryModel}"></span>
+        <span class="iconfont icon-gallery-view" :class="{'icon-active':galleryModel}"></span>
+      </div>
+    </div>
+    <ul class="clear-fix image-container" @click="imgView">
+      <li v-for="(pathObj,index) in pathList" :key="'img_'+index">
+        <img :src="pathObj.path"
+             :alt="pathObj.alt"
+             :title="pathObj.title"
+             :id="index"
+             @load="loadOn"
+             @error="loadErr"
+        >
+      </li>
+    </ul>
+  </div>
 </template>
 
 <script>
   import {mapState} from 'vuex'
+  import '../../assets/iconfont/iconfont.css'
   //---图片预览库
   import Viewer from 'viewerjs'
   import 'viewerjs/dist/viewer.css'
@@ -27,10 +36,16 @@
   export default {
     name: "ImgList",
     data() {
+      const range = 5 * imgRow;
+      //非响应式变量
+      this.gallery = undefined; //多图模式Viewer实例容器
+      this.imgViewObj = {}  //单图模式Viewer实例容器
+      //响应式变量
       return {
         loadIndex: -1,  //图片从loading更新真实src的索引
         loadStart: false, //加载完成的图片数量
-        titleList: [],  //已经加载的图片标题数组
+        titleList: new Array(range).fill(''),  //已经加载的图片标题数组
+        galleryModel: false,  //多图模式
       }
     },
     methods: {
@@ -66,20 +81,43 @@
       //----图片点击冒泡
       imgView(event) {
         const img = event.target;
-        console.log('click...', img.alt)
-        // if(this.gallery)return
-        // console.log(this.gallery)
-        // if(this.gallery){
-        //   this.gallery.show()
-        // }
+        // console.log('click...', img.alt)
+        const imgId = parseInt(img.id)
         //动态绑定预览事件
-        // if (!img.hasBind) {
-        //   img.hasBind=true;
-        //   new Viewer(img).show();
-        //   return
-        // }
-        // console.log(img.viewer)
-        // img.viewer.destroy()
+        if (!this.galleryModel) {
+          //单图模式并显示
+          if (!this.imgViewObj[imgId]) {
+            const viewer = new Viewer(img);
+            this.imgViewObj[imgId] = viewer;
+            viewer.show()
+          }
+        } else if (!this.gallery) {
+          //多图模式并切到选中图片
+          this.gallery = new Viewer(event.currentTarget)
+          this.gallery.view(imgId)
+        }
+      },
+      //----切换单图/多图预览模式
+      changeModel(event) {
+        const classList = [...event.target.classList]
+        console.log(classList)
+        if (classList.indexOf("icon-active") !== -1) return
+        if (this.galleryModel) {
+          //销毁多图模式Viewer实例
+          if (this.gallery) {
+            this.gallery.destroy()
+            this.gallery = undefined;
+          }
+        } else {
+          //销毁所有单图模式Viewer实例
+          Object.values(this.imgViewObj).map(viewer => {
+            viewer.destroy()
+          })
+          this.imgViewObj = {}
+        }
+        //切换模式
+        this.galleryModel = !this.galleryModel;
+        console.log(this.galleryModel ? '---》多图' : '---》单图')
       }
     },
     computed: {
@@ -109,15 +147,13 @@
           }
         })
       },
-      //----处于loading状态的图片数
+      //----页面处于loading状态的图片数
       loadingSum() {
         const range = this.end - this.start;
-        const count = this.titleList.slice(0, range)
+        return this.titleList.slice(0, range)
           .reduce((total, item) => {
             return total + (item === '#loading#' ? 1 : 0)
           }, 0)
-        // console.log(range, '-->', count)
-        return count
       }
     },
     watch: {
@@ -126,14 +162,12 @@
         console.log('-->page change')
         this.loadStart = false;
         this.loadIndex = -1;
-        // if (this.loadingSum !== 0) {
-        //   console.log('----->未加载完!', this.loadingSum)
-        // }
-
-        // this.titleList.
-        // if(this.gallery){
-        //   this.gallery.destroy()
-        // }
+        //切页面销毁多图模式实例
+        if (this.gallery) {
+          this.gallery.destroy()
+          this.gallery = undefined;
+          console.log(this.gallery)
+        }
       }
     },
     beforeMount() {
@@ -145,12 +179,56 @@
       const pageTo = limitNum(page, 1, pageMax);
       //初始化换页变化量
       this.$store.dispatch('pageData/initState', {pageMax, range, pageTo});
-      //初始化私有响应式变量
-      this.titleList = new Array(range).fill('')
-    }
+      // console.log(this.galleryModel ? '---》多图' : '---》单图')
+    },
   }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
+  @import "../../assets/less/public";
+
+  @imgWidth: @mainWidth/6; //图片宽度
+  @imgLeftMargin: @imgWidth/6; //图片左偏移
+  //======================
+  //      图片列表区
+  //======================
+  .icon-container {
+    /*background-color: skyblue;*/
+
+    span {
+      float: right;
+      font-size: 24px;
+      margin-right: @imgLeftMargin;
+    }
+  }
+
+  .icon-active {
+    color: orangered;
+  }
+
+  //展示区
+  .image-container {
+    width: 100%;
+    margin: 0 auto;
+
+    li {
+      float: left;
+      width: @imgWidth;
+      height: $width;
+      margin-left: @imgLeftMargin;
+      margin-top: @imgLeftMargin/2;
+      margin-bottom: @imgLeftMargin/2;
+      box-sizing: border-box;
+      border: rgba(0, 0, 0, 0.6) solid 2px;
+      border-radius: 6px;
+      overflow: hidden;
+
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+
 
 </style>
