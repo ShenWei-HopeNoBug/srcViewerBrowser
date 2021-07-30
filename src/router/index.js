@@ -3,7 +3,7 @@ import ImgList from "../pages/ImgList";
 import VideoList from "../pages/VideoList";
 import MusicList from "../pages/MusicList";
 
-//´´½¨²¢±©Â¶Ò»¸öÂ·ÓÉÆ÷
+//æ³¨å†Œå¹¶æš´éœ²è·¯ç”±
 export default new VueRouter({
   routes: [
     {

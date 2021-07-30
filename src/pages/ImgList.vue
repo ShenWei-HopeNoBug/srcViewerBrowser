@@ -84,10 +84,26 @@
           this.gallery.view(imgId)
         }
       },
+      //---销毁指定模式Viewer实例
+      viewerDestroy(isGallery) {
+        if (isGallery) {
+          //销毁多图模式Viewer实例
+          if (this.gallery) {
+            this.gallery.destroy()
+            this.gallery = undefined;
+          }
+        } else {
+          //销毁所有单图模式Viewer实例
+          Object.values(this.imgViewObj).map(viewer => {
+            viewer.destroy()
+          })
+          this.imgViewObj = {}
+        }
+      }
     },
     computed: {
       ...mapState('pageData', ['start', 'end']),
-      ...mapState('modelData',['isGallery']),
+      ...mapState('modelData', ['isGallery']),
       //----显示资源列表
       pathList() {
         const {start, end} = this
@@ -128,27 +144,13 @@
         // console.log('-->page change')
         this.loadStart = false;
         this.loadIndex = -1;
-        //切页面销毁多图模式实例
-        if (this.gallery) {
-          this.gallery.destroy()
-          this.gallery = undefined;
-        }
+        //销毁Viewer实例
+        this.viewerDestroy(this.isGallery)
       },
       //----是否切换单图/多图模式
       isGallery() {
-        if (!this.isGallery) {
-          //销毁多图模式Viewer实例
-          if (this.gallery) {
-            this.gallery.destroy()
-            this.gallery = undefined;
-          }
-        } else {
-          //销毁所有单图模式Viewer实例
-          Object.values(this.imgViewObj).map(viewer => {
-            viewer.destroy()
-          })
-          this.imgViewObj = {}
-        }
+        //销毁Viewer实例
+        this.viewerDestroy(!this.isGallery)
       }
     },
     beforeMount() {
@@ -159,7 +161,7 @@
         pathLength / range : parseInt(pathLength / range) + 1;
       const pageTo = limitNum(page, 1, pageMax);
       //初始化换页变化量
-      this.$store.dispatch('pageData/initState', {pageMax, range, pageTo});
+      this.$store.dispatch('pageData/initState', {pageMax, range, pathLength, pageTo});
     },
   }
 </script>

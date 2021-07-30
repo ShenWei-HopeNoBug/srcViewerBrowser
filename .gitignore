@@ -2,6 +2,8 @@
 node_modules
 /dist
 /browser
+src/assets/media/video/3Ddemo.mp4
+src/assets/media/video/test.mp4
 
 
 # local env files

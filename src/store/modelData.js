@@ -1,15 +1,20 @@
-//----------------Ä£×éÏà¹ØµÄÊı¾İ
+//----------------æ¨¡ç»„ç›¸å…³çš„æ•°æ®
 
 export default {
-  //---¿ªÆôÃüÃû¿Õ¼äºÃÈÃ mapState µÈÊ¶±ğ
   namespaced: true,
   actions: {},
   mutations: {
+    //åˆ‡æ¢å•/å¤šå›¾é¢„è§ˆæ¨¡å¼
     TOGGLE_VIEWER(state) {
       state.isGallery = !state.isGallery;
+    },
+    //è®¾ç½®è§†é¢‘æ’­æ”¾çŠ¶æ€
+    SET_PLAYING(state, {num}) {
+      state.playSum = num
     }
   },
   state: {
-    isGallery: false,  //Í¼Æ¬Ä£Ê½ÊÇ·ñÎª¶àÍ¼Ä£Ê½
+    isGallery: false,  //æ˜¯å¦ä¸ºå¤šå›¾é¢„è§ˆæ¨¡å¼
+    playSum: 0,  //æ­£åœ¨æ’­æ”¾è§†é¢‘æ•°
   }
 }

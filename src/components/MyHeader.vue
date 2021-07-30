@@ -1,39 +1,39 @@
 <template>
-  <div id="head-bar">
-    <button id="btn-pre"
+  <div class="head-bar">
+    <button class="btn-pre"
             @click="pageBack"
             :disabled='curPage===1'
     >上一页
     </button>
     <!--基本信息-->
-    <div id="title-container">
+    <div class="info-container">
       <h2>资源预览</h2>
-      <h2 id="img-num">( {{start+1}} - {{end}} )</h2>
+      <h2>(&nbsp;{{start+1}}&nbsp;-&nbsp;{{end}}&nbsp;)</h2>
     </div>
     <!--页数信息-->
-    <div id="page-show-container">
-      <h2 id="page">第 {{curPage}} 页</h2>
-      <h2 id="page-sum">共 {{pageMax}} 页</h2>
+    <div class="page-show-container">
+      <h2>第&nbsp;{{curPage}}&nbsp;页</h2>
+      <h2 class="page-sum">共&nbsp;{{pageMax}}&nbsp;页</h2>
     </div>
     <!--跳转-->
-    <div id="page-jump-container">
-      <div id="page-jump">
-        <div>
+    <div class="page-jump-container">
+      <div class="page-jump-area">
+        <div class="page-input">
           <span>跳转到第&nbsp;</span>
-          <input id="page-input"
-                 type="number"
+          <input type="number"
                  min="1"
+                 @keyup.enter="pageJump"
                  ref="pageInput"
           >
           <span>&nbsp;页</span>
         </div>
-        <button id="btn-jump"
+        <button class="btn-jump"
                 @click="pageJump"
         >跳转
         </button>
       </div>
     </div>
-    <button id="btn-next"
+    <button class="btn-next"
             @click="pageForward"
             :disabled='curPage===pageMax'
     >下一页
@@ -47,17 +47,11 @@
 
   export default {
     name: "MyHeader",
-    data() {
-      return {
-        curPage: 1,
-      }
-    },
     methods: {
       //下一页
       pageForward() {
         let curPage = this.curPage;
         curPage = limitNum(++curPage, 1, this.pageMax);
-        this.curPage = curPage;
         //改变显示资源范围
         this.$store.dispatch('pageData/pageChange', {pageTo: curPage});
       },
@@ -65,7 +59,6 @@
       pageBack() {
         let curPage = this.curPage;
         curPage = limitNum(--curPage, 1, this.pageMax);
-        this.curPage = curPage;
         //改变显示资源范围
         this.$store.dispatch('pageData/pageChange', {pageTo: curPage});
       },
@@ -83,31 +76,40 @@
           return;
         }
         //输入页码为当前页码
-        else if (pageTo === this.curPage) return;
-        this.curPage = pageTo;
+        else if (this.curPage === pageTo) return;
         //改变显示资源范围
         this.$store.dispatch('pageData/pageChange', {pageTo, range: this.range});
       }
     },
     computed: {
-      ...mapState('pageData', ['pageMax', 'start', 'end', 'range'])
+      ...mapState('pageData', ['pageMax', 'start', 'end', 'range', 'curPage'])
     },
-    beforeMount() {
-      this.curPage = limitNum(page, 1, this.pageMax)
-    }
+    created() {
+      //绑定换页快捷键
+      document.onkeyup = (event) => {
+        const keyName = event.key.toUpperCase();
+        if (keyName === 'D') {
+          //下一页
+          this.pageForward();
+        } else if (keyName === 'A') {
+          //上一页
+          this.pageBack();
+        }
+      }
+    },
   }
 </script>
 
 <style lang="less" scoped>
   @import "../assets/less/public";
 
-  @pageBtnWith: @mainRatio*100px; //版头换页按钮宽度
-  @titleWidth: (@mainWidth)-2*@pageBtnWith; //版头去除按钮主体宽度
-  @headHeight: @mainRatio*120px;
+  @pageBtnWidth: @mainRatio*100px; //版头换页按钮宽度
+  @titleWidth: (@mainWidth)-2*@pageBtnWidth; //版头去除按钮主体宽度
+  @headHeight: @mainRatio*120px; //版头高度
   //======================
   //         版头
   //======================
-  #head-bar {
+  .head-bar {
     .mainArea();
     height: @headHeight;
     line-height: $height;
@@ -116,9 +118,10 @@
     border-radius: 6px 6px 0 0;
     text-align: center;
     display: flex;
-    //--------------统一设置
+    justify-content: space-between;
+    //按钮统一设置
     button {
-      width: @pageBtnWith;
+      width: @pageBtnWidth;
       font-size: @mainRatio*20px;
       box-sizing: border-box;
       border: rgba(0, 0, 0, 0.2) solid 2px;
@@ -136,16 +139,17 @@
       }
     }
 
-    #btn-pre {
+    //换页按钮
+    .btn-pre {
       border-radius: 6px 0 0 0;
     }
 
-    #btn-next {
+    .btn-next {
       border-radius: 0 6px 0 0;
     }
 
-    //--------------其他
-    #title-container {
+    //基本信息
+    .info-container {
       height: 100%;
       width: @titleWidth*0.35;
       padding-top: 0.083*@headHeight;
@@ -155,7 +159,8 @@
       }
     }
 
-    #page-show-container {
+    //页数信息
+    .page-show-container {
       height: 100%;
       width: (@titleWidth)*0.35;
 
@@ -163,26 +168,27 @@
         display: inline-block;
       }
 
-      #page-sum:before {
+      .page-sum:before {
         content: "|";
         margin-right: @mainRatio*14px;
         margin-left: @mainRatio*10px;
       }
     }
 
-    #page-jump-container {
+    //页面跳转
+    .page-jump-container {
       height: 100%;
       width: @titleWidth*0.3;
       background-color: #817E7C;
 
-      #page-jump {
+      .page-jump-area {
         height: 100%;
         width: 90%;
         margin: 0 auto;
         text-align: center;
         overflow: hidden;
 
-        div {
+        .page-input {
           padding: @mainRatio*9px 0;
           height: @headHeight*0.35;
           line-height: $height;
@@ -195,7 +201,7 @@
           }
         }
 
-        #btn-jump {
+        .btn-jump {
           display: block;
           margin: @headHeight*0.083 auto;
           width: 60%;
@@ -204,5 +210,4 @@
       }
     }
   }
-
 </style>
