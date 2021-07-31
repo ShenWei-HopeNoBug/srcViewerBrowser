@@ -14,7 +14,7 @@
   //---视频资源
   import outSizeVideo from '../assets/media/video/outSize.mp4';
   import errorVideo from '../assets/media/video/loadError.mp4'
-  import testVideo from '../assets/media/video/3Ddemo.mp4'
+  // import testVideo from '../assets/media/video/3Ddemo.mp4'
 
   export default {
     name: "VideoItem",
@@ -34,9 +34,6 @@
         }
       }
     },
-    data() {
-      return {}
-    },
     computed: {
       ...mapState('modelData', ['playSum']),
       ...mapState('pageData', ['start']),
@@ -45,7 +42,7 @@
       //监视传入的path是否变化
       path() {
         this.player.src([
-          {src: testVideo},
+          {src: this.path},
           {src: errorVideo}
         ])
       },
@@ -87,6 +84,10 @@
       this.player.on('pause', () => {
         //计数器-1
         this.$store.commit('modelData/SET_PLAYING', {num: this.playSum - 1});
+      });
+      //加载出错加载错误视频
+      this.player.on('error',function () {
+        this.src(errorVideo)
       })
     },
     beforeDestroy() {

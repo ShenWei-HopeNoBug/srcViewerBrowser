@@ -1,5 +1,5 @@
 <template>
-  <div id="list-container" class="clear-fix">
+  <div class="list-container">
     <div class="spaceBar"></div>
     <div class="splitBar"></div>
     <div class="spaceBar"></div>
@@ -113,15 +113,17 @@
   }
 </script>
 
-<style lang="less">
-  @import "../assets/less/public";
+<style lang="less" scoped>
+  @import "../assets/less/params";
+  @import "../assets/less/globalStyle";
+  @import "../assets/less/optionalStyle";
 
   @imgWidth: @mainWidth/6; //图片宽度
   @imgLeftMargin: @imgWidth/6; //图片左偏移
   //======================
   //        列表区
   //======================
-  #list-container {
+  .list-container {
     .mainArea();
     background-color: #FAEACE;
     //空白行

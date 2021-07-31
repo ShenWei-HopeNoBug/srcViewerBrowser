@@ -101,7 +101,8 @@
 </script>
 
 <style lang="less" scoped>
-  @import "../assets/less/public";
+  @import "../assets/less/params";
+  @import "../assets/less/globalStyle";
 
   @pageBtnWidth: @mainRatio*100px; //版头换页按钮宽度
   @titleWidth: (@mainWidth)-2*@pageBtnWidth; //版头去除按钮主体宽度

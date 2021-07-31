@@ -1,0 +1,17 @@
+@import "./params";
+//======================
+//       全局样式
+//======================
+//清除浮动
+.clear-fix:after,
+.clear-fix:before {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+//主要区域公共样式
+.mainArea() {
+  margin-left: ((@maxWidth)-(@mainWidth))*0.5;
+  width: @mainWidth;
+}

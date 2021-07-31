@@ -1,5 +1,5 @@
 <template>
-  <div id="footer">
+  <div class="footer">
     <span>作者：路边的灰机场</span>
   </div>
 </template>
@@ -7,20 +7,18 @@
 <script>
   export default {
     name: "MyFooter",
-    data() {
-      return {}
-    },
   }
 </script>
 
 <style lang="less" scoped>
-  @import "../assets/less/public";
+  @import "../assets/less/params";
+  @import "../assets/less/globalStyle";
 
   @footHeight: @mainRatio*140px;
   //======================
   //         页脚
   //======================
-  #footer {
+  .footer {
     .mainArea();
     height: @footHeight;
     background-color: #9B5050;

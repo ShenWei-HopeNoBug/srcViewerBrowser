@@ -6,15 +6,12 @@
                  :path="videoObj.path"
       />
       <!--视频信息-->
-      <div class="video-info"
-           @mouseover="showInfo=index"
-           @mouseleave="showInfo=-1"
-      >
+      <div class="video-info">
         <div class="info-general">
           <span>{{videoObj._id}}</span>
           <span>{{videoObj.path}}</span>
         </div>
-        <div class="info-details" v-show="showInfo===index">
+        <div class="info-details">
           <span>{{videoObj.path}}</span>
           <div class="tri">
             <div class="tri-out"></div>
@@ -40,12 +37,6 @@
   export default {
     name: "VideoList",
     components: {VideoItem},
-    data() {
-      return {
-        showInfo: -1, //显示视频信息的索引值
-      }
-    },
-    methods: {},
     computed: {
       ...mapState('pageData', ['start', 'end']),
       //----显示资源列表
@@ -59,6 +50,7 @@
           return {
             path,
             _id: `【${start + index + 1}】`,
+            //传给组件的配置
             options: {
               preload: 'auto',
             }
@@ -66,12 +58,12 @@
         })
       },
     },
-    watch:{
+    watch: {
       //监视页码是否变化
-      start(){
+      start() {
         //将页面播放数清零
         this.$store.commit('modelData/SET_PLAYING', {num: 0});
-      }
+      },
     },
     beforeMount() {
       const range = 2 * videoRow;
@@ -79,7 +71,7 @@
       const pathLength = videoPath.length;
       const pageMax = pathLength % range === 0 ?
         pathLength / range : parseInt(pathLength / range) + 1;
-      const pageTo = limitNum(page, 1, pageMax);
+      const pageTo = limitNum(videoPage, 1, pageMax);
       //初始化换页变化量
       this.$store.dispatch('pageData/initState', {pageMax, range, pageTo, pathLength});
       //将页面播放数清零
@@ -89,7 +81,7 @@
 </script>
 
 <style lang="less" scoped>
-  @import "../assets/less/public";
+  @import "../assets/less/params";
 
   @videoWidth: @mainWidth*0.45; //视频宽度
   @videoLeftMargin: ((@mainWidth)-(@videoWidth)*2)/3; //视频左偏移
@@ -123,6 +115,13 @@
         text-align: center;
         position: relative;
 
+        //悬停显示详细信息
+        &:hover {
+          .info-details {
+            visibility: visible;
+          }
+        }
+
         //简略信息
         .info-general {
           width: 64%;
@@ -144,7 +143,8 @@
 
         //详细信息
         .info-details {
-          opacity: 92%;
+          visibility: hidden;
+          opacity: 0.92;
           box-sizing: border-box;
           background-color: #C66F64;
           padding: @mainRatio*20px;

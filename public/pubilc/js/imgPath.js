@@ -1,4 +1,3 @@
-console.log('imgPath')
 const imgPath=[
   "../../assets/media/img/run1.gif",
   "#../../assets/media/img/run2.gif",

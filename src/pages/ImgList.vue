@@ -159,7 +159,7 @@
       const pathLength = imgPath.length;
       const pageMax = pathLength % range === 0 ?
         pathLength / range : parseInt(pathLength / range) + 1;
-      const pageTo = limitNum(page, 1, pageMax);
+      const pageTo = limitNum(imgPage, 1, pageMax);
       //初始化换页变化量
       this.$store.dispatch('pageData/initState', {pageMax, range, pathLength, pageTo});
     },
@@ -167,7 +167,7 @@
 </script>
 
 <style lang="less" scoped>
-  @import "../assets/less/public";
+  @import "../assets/less/params";
 
   @imgWidth: @mainWidth/6; //图片宽度
   @imgLeftMargin: @imgWidth/6; //图片左偏移

@@ -1,7 +1,7 @@
-console.log('----options----');
-let page = 1;
-console.log('起始页：', page);
-const initPath = "/video"
+const initPath = "/music";
+const imgPage = 1;
 const imgRow = 2;
+const videoPage =1;
 const videoRow = 2;
+const musicPage =1;
 const musicRow = 2;
