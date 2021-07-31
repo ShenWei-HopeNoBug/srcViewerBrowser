@@ -13,8 +13,9 @@
 </template>
 
 <script>
-  import {mapState} from 'vuex'
+  import {mapState, mapActions} from 'vuex'
   import '../assets/iconfont/iconfont.css'
+  import {limitNum} from "../assets/js/tools"
   //---图片预览库
   import Viewer from 'viewerjs'
   import 'viewerjs/dist/viewer.css'
@@ -22,8 +23,6 @@
   import errorImg from '../assets/media/img/loadError.jpg'
   import outSizeImg from '../assets/media/img/outSize.jpg'
   import loadImg from '../assets/media/img/loading.gif'
-  import {limitNum} from "../assets/js/tools"
-  // import runImg from '../assets/media/img/run.gif'
 
   export default {
     name: "ImgList",
@@ -40,6 +39,7 @@
       }
     },
     methods: {
+      ...mapActions('pageData', {initPageState: 'initState'}),
       //----图片加载出错
       loadErr(event) {
         event.target.src = errorImg;
@@ -68,6 +68,8 @@
       //----图片点击冒泡
       imgView(event) {
         const img = event.target;
+        //只响应有id的图片区域
+        if (!img.id) return
         // console.log('click...', img.alt)
         const imgId = parseInt(img.id)
         //动态绑定预览事件
@@ -103,7 +105,7 @@
     },
     computed: {
       ...mapState('pageData', ['start', 'end']),
-      ...mapState('modelData', ['isGallery']),
+      ...mapState('routeData', ['isGallery']),
       //----显示资源列表
       pathList() {
         const {start, end} = this
@@ -161,7 +163,7 @@
         pathLength / range : parseInt(pathLength / range) + 1;
       const pageTo = limitNum(imgPage, 1, pageMax);
       //初始化换页变化量
-      this.$store.dispatch('pageData/initState', {pageMax, range, pathLength, pageTo});
+      this.initPageState({pageMax, range, pathLength, pageTo});
     },
   }
 </script>

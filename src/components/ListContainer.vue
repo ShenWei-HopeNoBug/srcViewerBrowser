@@ -3,27 +3,7 @@
     <div class="spaceBar"></div>
     <div class="splitBar"></div>
     <div class="spaceBar"></div>
-
-    <div class="toggle-banner">
-      <div class="pageIcon-container" @click="changePage">
-        <span class="iconfont icon-image-fill"
-              :class="{'pageIcon-active':curPath==='/image'}"
-              id="/image"
-        ></span>
-        <span class="iconfont icon-video-fill"
-              :class="{'pageIcon-active':curPath==='/video'}"
-              id="/video"
-        ></span>
-        <span class="iconfont icon-customerservice-fill"
-              :class="{'pageIcon-active':curPath==='/music'}"
-              id="/music"
-        ></span>
-      </div>
-      <div v-show="curPath==='/image'" @click="switchImgView" class="imgIcon-container">
-        <span class="iconfont icon-picture-fill" :class="{'imgIcon-active':!isGallery}"></span>
-        <span class="iconfont icon-gallery-view" :class="{'imgIcon-active':isGallery}"></span>
-      </div>
-    </div>
+    <MyNavigate/>
     <router-view/>
     <div class="spaceBar"></div>
     <div class="splitBar"></div>
@@ -32,94 +12,48 @@
 </template>
 
 <script>
-  import {mapState} from 'vuex'
-  import ImgList from "../pages/ImgList"
-
-  import '../assets/iconfont/iconfont.css'
+  import {mapMutations} from 'vuex'
+  import MyNavigate from "./MyNavigate";
 
   export default {
     name: "ListContainer",
     components: {
-      ImgList,
+      MyNavigate
     },
     data() {
       this.initPath = initPath; //储存初始化路径
       this.routeList = ['/image', '/video', '/music'];  //合法路径集合
-      return {
-        curPath: '/image'
-      }
+      return {}
     },
     methods: {
-      //切换图片预览方式(单图/多图)
-      switchImgView(event) {
-        const classList = [...event.target.classList]
-        if (classList.indexOf("imgIcon-active") !== -1) return
-        this.$store.commit('modelData/TOGGLE_VIEWER');
-      },
-      //----切换页面
-      changePage(event) {
-        const icon = event.target;
-        const classList = [...icon.classList];
-        if (classList.indexOf("pageIcon-active") !== -1) return
-        const curPath = this.$router.history.current.path;
-        //切换图片页面
-        if (icon.id === '/image') {
-          const pageTo = '/image'
-          this.curPath = pageTo;
-          if (curPath !== pageTo) {
-            this.$router.push(pageTo);
-          }
-          //切换视频页面
-        } else if (icon.id === '/video') {
-          const pageTo = '/video'
-          this.curPath = pageTo;
-          if (curPath !== pageTo) {
-            this.$router.push(pageTo);
-          }
-          //切换音乐页面
-        } else if (icon.id === '/music') {
-          const pageTo = '/music'
-          this.curPath = pageTo;
-          if (curPath !== pageTo) {
-            this.$router.push(pageTo);
-          }
-        }
-      }
-    },
-    computed: {
-      ...mapState('modelData', ['isGallery']),
+      ...mapMutations('routeData', {setRoute: 'SET_CURROUTE'}),
     },
     mounted() {
-      // console.log('mounted')
-      const curPath = this.$router.history.current.path;
+      const curRoute = this.$router.history.current.path;
       //重载路径是否合法
-      if (curPath === '/' || this.routeList.indexOf(curPath) === -1) {
+      if (curRoute === '/' || this.routeList.indexOf(curRoute) === -1) {
         this.$router.push(this.initPath)
-        this.curPath = this.initPath;
+        this.setRoute({route: this.initPath})
       } else {
-        this.curPath = curPath;
+        this.setRoute({route: curRoute})
       }
     },
     updated() {
-      // console.log('update')
-      const curPath = this.$router.history.current.path;
-      if (this.routeList.indexOf(curPath) === -1) {
+      const curRoute = this.$router.history.current.path;
+      //更新路径是否合法
+      if (this.routeList.indexOf(curRoute) === -1) {
         this.$router.push(this.initPath)
-        this.curPath = this.initPath;
+        this.setRoute({route: this.initPath})
       } else {
-        this.curPath = curPath;
+        this.setRoute({route: curRoute})
       }
     }
   }
 </script>
 
 <style lang="less" scoped>
-  @import "../assets/less/params";
   @import "../assets/less/globalStyle";
   @import "../assets/less/optionalStyle";
-
-  @imgWidth: @mainWidth/6; //图片宽度
-  @imgLeftMargin: @imgWidth/6; //图片左偏移
   //======================
   //        列表区
   //======================
@@ -135,40 +69,5 @@
     .splitBar {
       .spaceOptions();
     }
-
-    //模式切换导航栏
-    .toggle-banner {
-      display: flex;
-      justify-content: space-between;
-      height: 32px;
-      line-height: 32px;
-
-      //切换页面
-      .pageIcon-container {
-        span {
-          font-size: 32px;
-          vertical-align: center;
-          margin-left: @imgLeftMargin;
-        }
-
-        .pageIcon-active {
-          color: orangered;
-        }
-      }
-
-      //切换图片预览
-      .imgIcon-container {
-        span {
-          vertical-align: center;
-          font-size: 24px;
-          margin-right: @imgLeftMargin;
-        }
-
-        .imgIcon-active {
-          color: orangered;
-        }
-      }
-    }
-
   }
 </style>

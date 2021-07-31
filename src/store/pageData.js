@@ -18,14 +18,12 @@ export default {
   mutations: {
     //改变页码和资源索引范围
     PAGE_CHANGE(state, {pageTo}) {
-      // console.log('PAGE_CHANGE',pageTo)
       state.curPage = pageTo;
       state.start = (pageTo - 1) * state.range;
       state.end = limitNum(pageTo * state.range, 1, state.pathLength);
     },
     //初始化换页变化相关量
     INIT_RANGE(state, {curPage, pageMax, range, pathLength}) {
-      // console.log('INIT_STATE', {pageMax, range})
       state.curPage = curPage;
       state.pageMax = pageMax;
       state.range = range;

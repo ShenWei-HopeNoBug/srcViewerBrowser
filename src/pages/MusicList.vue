@@ -1,19 +1,33 @@
 <template>
   <ul>
-    <li v-for="(musicObj,index) in musicList" :key="'music_'+index"
-    >{{musicObj.path}}</li>
+    <li v-for="(musicObj,index) in musicList" :key="'music_'+index">
+      <!--      <audio :src="musicObj.path"-->
+      <!--             controls-->
+      <!--      ></audio>-->
+    </li>
+    <li>
+      <MusicPlayer/>
+    </li>
   </ul>
 </template>
 
 <script>
+  import {mapActions, mapState} from "vuex";
+  //---自定义函数
   import {limitNum} from "../assets/js/tools";
-  import {mapState} from "vuex";
-  import outSizeMusic from "../assets/media/video/outSize.mp4";
+  //---组件
+  import MusicPlayer from "../components/MusicPlayer/MusicPlayer";
+  //---资源
+  import outSizeMusic from "../assets/media/music/Living In The One.mp3";
 
   export default {
     name: "MusicList",
+    components: {MusicPlayer},
     data() {
       return {}
+    },
+    methods: {
+      ...mapActions('pageData', {initPageState: 'initState'}),
     },
     computed: {
       ...mapState('pageData', ['start', 'end']),
@@ -39,11 +53,17 @@
         pathLength / range : parseInt(pathLength / range) + 1;
       const pageTo = limitNum(musicPage, 1, pageMax);
       //初始化换页变化量
-      this.$store.dispatch('pageData/initState', {pageMax, range, pageTo, pathLength});
+      this.initPageState({pageMax, range, pathLength, pageTo});
     },
   }
 </script>
 
 <style scoped>
+  li {
+    padding-left: 100px;
+  }
 
+  /*audio {*/
+  /*  height: 100px;*/
+  /*}*/
 </style>

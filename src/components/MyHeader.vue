@@ -42,25 +42,22 @@
 </template>
 
 <script>
-  import {mapState} from 'vuex';
+  import {mapState, mapActions} from 'vuex';
   import {limitNum} from "../assets/js/tools";
 
   export default {
     name: "MyHeader",
     methods: {
+      ...mapActions('pageData', {pageChange: 'pageChange'}),
       //下一页
       pageForward() {
-        let curPage = this.curPage;
-        curPage = limitNum(++curPage, 1, this.pageMax);
-        //改变显示资源范围
-        this.$store.dispatch('pageData/pageChange', {pageTo: curPage});
+        const pageTo = limitNum(this.curPage + 1, 1, this.pageMax);
+        this.pageChange({pageTo});
       },
       //上一页
       pageBack() {
-        let curPage = this.curPage;
-        curPage = limitNum(--curPage, 1, this.pageMax);
-        //改变显示资源范围
-        this.$store.dispatch('pageData/pageChange', {pageTo: curPage});
+        const pageTo = limitNum(this.curPage - 1, 1, this.pageMax);
+        this.pageChange({pageTo});
       },
       //页面跳转
       pageJump() {
@@ -77,8 +74,8 @@
         }
         //输入页码为当前页码
         else if (this.curPage === pageTo) return;
-        //改变显示资源范围
-        this.$store.dispatch('pageData/pageChange', {pageTo, range: this.range});
+        //跳转页面
+        this.pageChange({pageTo});
       }
     },
     computed: {

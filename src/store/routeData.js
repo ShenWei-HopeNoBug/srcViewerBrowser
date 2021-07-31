@@ -8,13 +8,18 @@ export default {
     TOGGLE_VIEWER(state) {
       state.isGallery = !state.isGallery;
     },
-    //设置视频播放状态
-    SET_PLAYING(state, {num}) {
-      state.playSum = num
+    //设置媒体播放总数
+    SET_PLAYINGSUM(state, {num}) {
+      state.playingSum = num
+    },
+    //设置当前路由路径
+    SET_CURROUTE(state, {route}) {
+      state.curRoute = route
     }
   },
   state: {
+    curRoute: '/',  //当前路由路径
     isGallery: false,  //是否为多图预览模式
-    playSum: 0,  //正在播放视频数
+    playingSum: 0,  //正在播放媒体数
   }
 }
