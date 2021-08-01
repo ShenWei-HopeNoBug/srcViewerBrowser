@@ -1,12 +1,7 @@
 <template>
-  <ul>
+  <ul class="musics">
     <li v-for="(musicObj,index) in musicList" :key="'music_'+index">
-      <!--      <audio :src="musicObj.path"-->
-      <!--             controls-->
-      <!--      ></audio>-->
-    </li>
-    <li>
-      <MusicPlayer/>
+      <MusicPlayer :path="musicObj.path"/>
     </li>
   </ul>
 </template>
@@ -18,14 +13,11 @@
   //---组件
   import MusicPlayer from "../components/MusicPlayer/MusicPlayer";
   //---资源
-  import outSizeMusic from "../assets/media/music/Living In The One.mp3";
+  // import outSizeMusic from "../assets/media/music/Living In The One.mp3";
 
   export default {
     name: "MusicList",
     components: {MusicPlayer},
-    data() {
-      return {}
-    },
     methods: {
       ...mapActions('pageData', {initPageState: 'initState'}),
     },
@@ -34,11 +26,11 @@
       //----显示资源列表
       musicList() {
         const {start, end} = this
-        return musicPath.slice(start, end).map((path, index) => {
+        return musicPath.slice(start, end).map(path => {
           //是否超出大小范围
-          if (path.startsWith('#')) {
-            path = outSizeMusic;
-          }
+          // if (path.startsWith('#')) {
+          //   path = outSizeMusic;
+          // }
           return {
             path,
           }
@@ -58,12 +50,28 @@
   }
 </script>
 
-<style scoped>
-  li {
-    padding-left: 100px;
+<style lang="less" scoped>
+  @import "../assets/less/params";
+
+  @musicWidth: @mainWidth*0.4; //视频宽度
+  @mucisLeftMargin: ((@mainWidth)-(@musicWidth)*2)/3; //视频左偏移
+  .musics {
+    width: 100%;
+    margin: 0 auto;
+
+    li {
+      display: inline-block;
+      width: @musicWidth;
+      min-height: 140px;
+      margin-left: @mucisLeftMargin;
+      margin-top: @mucisLeftMargin/2;
+      margin-bottom: @mucisLeftMargin/2;
+      /*background-color: #EAFFE3;*/
+      box-sizing: border-box;
+      /*border: rgba(0, 0, 0, 0.6) solid 2px;*/
+      border-radius: 6px;
+    }
   }
 
-  /*audio {*/
-  /*  height: 100px;*/
-  /*}*/
+
 </style>

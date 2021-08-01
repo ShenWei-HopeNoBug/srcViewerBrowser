@@ -1,85 +1,87 @@
 <template>
   <div class="disk" :class="{'disk-playing':isPlaying}">
-    <label for="file"
-           class="disk-cover"
-           ref="cover"
-           :style="{
-              transform:stopMatrix,
-              backgroundImage:coverUrl?`url(${coverUrl})`:''
-           }"
-    />
-    <!--    <input type="text">-->
+    <div class="disk-cover"
+         :style="{backgroundImage:coverUrl?`url(${coverUrl})`:''}"
+    ></div>
   </div>
 </template>
 
 <script>
-  import test from '../../assets/media/img/loadError.jpg'
-
   export default {
     name: "MusicDisk",
-    data() {
-      return {
-        isPlaying: false,
-        stopMatrix:'',
-        coverUrl:''
+    props: {
+      isPlaying: {required: true},
+      coverUrl: {
+        default() {
+          return ''
+        }
       }
     },
   }
 </script>
 
 <style lang="less" scoped>
+  //唱片
   .disk {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2),
+    0 10px 10px rgba(95, 23, 101, 0.3);
     position: relative;
     //圆形居中
     padding-top: 100%;
     border-radius: 100%;
     overflow: hidden;
-    transform: translateY(-50%) scale(0.88);
-    transform-origin: center bottom;
+    //变形
+    transform: translateY(-20%);
+    transform-origin: center;
 
     transition: all 0.6s ease;
+
+    //唱片封面
+    .disk-cover {
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      right: -10px;
+      bottom: -10px;
+      background-image: radial-gradient(circle, #444 0%, #333 100%);
+      background-size: cover;
+      background-position: center;
+    }
+
+    //唱片内圆
+    &::after {
+      content: '';
+      width: 20px;
+      height: 20px;
+      border-radius: 100%;
+      position: absolute;
+      //居中
+      top: 50%;
+      left: 50%;
+      transform: translateX(-50%) translateY(-50%);
+      transform-origin: center;
+      background-image: linear-gradient(45deg, white, #dabad1);
+      box-shadow: 0 1px 1px 1px rgba(0, 0, 0, 0.1);
+    }
   }
 
-  .disk-cover {
-    position: absolute;
-    top: -10px;
-    left: -10px;
-    right: -10px;
-    bottom: -10px;
-    background-image: radial-gradient(circle, #444 0%, #333 100%);
-    background-size: cover;
-    background-position: center;
-  }
-
-  .disk-cover::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-left: -8px;
-    margin-top: -8px;
-    width: 16px;
-    height: 16px;
-    border-radius: 100%;
-    background-image: linear-gradient(45deg, white, #dabad1);
-    box-shadow: 0 1px 1px 1px rgba(0, 0, 0, 0.2);
-  }
-
+  //播放动画
   .disk-playing {
-    transform: translateY(-50%);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1),
-    0 20px 20 px -10px rgba(108, 29, 171, 0.3);
+    transform: translateY(0) scale(0.9);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4),
+    0 6px 6px rgba(95, 23, 101, 0.4);
 
     .disk-cover {
       animation: rotate infinite 6s linear;
     }
   }
 
+  //旋转动画
   @keyframes rotate {
-    from{
+    from {
       transform: rotate(0deg)
     }
-    to{
+    to {
       transform: rotate(360deg);
     }
   }

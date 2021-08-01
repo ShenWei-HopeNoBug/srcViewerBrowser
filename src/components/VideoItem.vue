@@ -8,7 +8,7 @@
     <div class="video-info">
       <div class="info-general">
         <span>{{_id}}</span>
-        <span>{{path}}</span>
+        <span>{{title}}</span>
       </div>
       <div class="info-details">
         <span>{{path}}</span>
@@ -53,6 +53,11 @@
         required: true
       }
     },
+    data() {
+      return {
+        title: '', //短标题(文件名)
+      }
+    },
     methods: {
       ...mapMutations('routeData', {setPlayingSum: 'SET_PLAYINGSUM'}),
     },
@@ -70,6 +75,8 @@
       },
     },
     mounted() {
+      const pathArr = this.path.split('/');
+      this.title = pathArr[pathArr.length - 1];
       //默认配置
       const defaultOptions = {
         preload: 'auto',
@@ -124,6 +131,7 @@
 
 <style lang="less" scoped>
   @import "../assets/less/params";
+
   @videoWidth: @mainWidth*0.45; //视频宽度
   //容器
   .video-container {
