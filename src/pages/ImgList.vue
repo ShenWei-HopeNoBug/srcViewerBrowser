@@ -192,6 +192,8 @@
       border: rgba(0, 0, 0, 0.6) solid 2px;
       border-radius: 6px;
       overflow: hidden;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12),
+      0 20px 20px rgba(95, 23, 101, 0.2);
 
       img {
         width: 100%;

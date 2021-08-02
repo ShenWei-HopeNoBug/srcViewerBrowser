@@ -73,6 +73,11 @@
           {src: errorVideo}
         ])
       },
+      //监视是否换页码
+      start(){
+        const pathArr = this.path.split('/');
+        this.title = pathArr[pathArr.length - 1];
+      }
     },
     mounted() {
       const pathArr = this.path.split('/');

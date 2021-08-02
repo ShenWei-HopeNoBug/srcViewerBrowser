@@ -6,96 +6,134 @@
       />
     </div>
     <div class="main-area">
-      <div class="info">
-        <div class="title">{{title}}</div>
-        <div class="artist">{{artist?`——${artist}`:''}}</div>
+      <div class="audio-container">
+        <div class="info"
+             :class="{'info-detail':showDetail}"
+             @dblclick="showDetail=!showDetail"
+        >
+          <div class="title"
+               :style="{whiteSpace:showDetail?'':'nowrap'}"
+          >{{title}}
+          </div>
+          <div class="artist"
+               :style="{whiteSpace:showDetail?'':'nowrap',opacity:artist?1:0}"
+          >{{artist}}
+          </div>
+          <div class="file-path" v-show="showDetail">{{fullPath}}</div>
+        </div>
+        <audio :src="path"
+               preload="auto"
+               controls
+               ref="player"
+               @play="isPlaying=true"
+               @pause="isPlaying=false"
+        ></audio>
       </div>
-      <audio :src="path"
-             preload="auto"
-             controls
-             ref="player"
-             @play="isPlaying=true"
-             @pause="isPlaying=false"
-      ></audio>
     </div>
   </div>
 </template>
 
 <script>
   import {mapState} from 'vuex'
-  //解析音频文件库
-  import jsmediatags from '../../assets/js/jsmediatags'
+  //解析音频文件库(解析不了非服务器资源)
+  // import jsmediatags from '../../assets/js/jsmediatags'
   import MusicDisk from "./MusicDisk";
 
   export default {
     name: "MusicPlayer",
     props: {
-      path: {required: true},
+      path: {
+        type: String,
+        required: true
+      },
+      title: {
+        type: String,
+        required: true
+      },
+      artist: {
+        type: String,
+        default: ''
+      },
+      coverUrl: {
+        type: String,
+        default: ''
+      }
     },
     components: {
       MusicDisk,
     },
     data() {
-      this.defaultTitle = ''; //默认歌名(文件名)
       return {
         isPlaying: false,
-        title: '',
-        artist: '',
-        coverUrl: '',
+        showDetail: false,
       }
     },
+    // methods: {
+    //   // getInfo() {
+    //   //   //截取文件名
+    //   //   const pathArr = this.path.split('/');
+    //   //   let title = pathArr[pathArr.length - 1];
+    //   //   //去后缀
+    //   //   const defaultTitle = title.slice(0, title.lastIndexOf('.'));
+    //   //   // const basePath = 'file:///'
+    //   //   try {
+    //   //     jsmediatags.read(this.path, {
+    //   //       onSuccess: (result) => {
+    //   //         console.log('解析成功')
+    //   //         //解析歌曲歌名，歌手，封面
+    //   //         this.title = result.tags.title;
+    //   //         this.artist = result.tags.artist;
+    //   //         const {data} = result.tags.picture;
+    //   //         if (!data) return
+    //   //         let base64String = "";
+    //   //         data.map(value => {
+    //   //           base64String += String.fromCharCode(value);
+    //   //         })
+    //   //         this.coverUrl = `data:${data.format};base64,${window.btoa(base64String)}`;
+    //   //       },
+    //   //       onError: () => {
+    //   //         console.log('解析失败')
+    //   //         this.title = defaultTitle;
+    //   //       }
+    //   //     })
+    //   //   } catch (e) {
+    //   //     console.log('解析报错')
+    //   //     this.title = defaultTitle;
+    //   //   }
+    //   // }
+    // },
     computed: {
-      ...mapState('pageData', ['curPage'])
-    },
-    mounted() {
-      //截取文件名
-      const pathArr = this.path.split('/');
-      let title = pathArr[pathArr.length - 1];
-      //去后缀
-      title = title.slice(0, title.lastIndexOf('.'));
-      this.defaultTitle = title;
-      const basePath = 'http://localhost:8080/'
-      try {
-        jsmediatags.read(basePath + this.path, {
-          onSuccess: (result) => {
-            //解析歌曲歌名，歌手，封面
-            this.title = result.tags.title;
-            this.artist = result.tags.artist;
-            const {data} = result.tags.picture;
-            if (!data) return
-            let base64String = "";
-            data.map(value => {
-              base64String += String.fromCharCode(value);
-            })
-            this.coverUrl = `data:${data.format};base64,${window.btoa(base64String)}`;
-          },
-          onError: () => {
-            this.title = this.defaultTitle;
-          }
-        })
-      } catch (e) {
-        this.title = this.defaultTitle;
+      ...mapState('pageData', ['curPage']),
+      //要显示的完整路径
+      fullPath() {
+        let curPath = this.path;
+        if (curPath.startsWith('#')) {
+          curPath = curPath.slice(1)
+        }
+        return curPath
       }
     },
     watch: {
       curPage() {
-        //换页停止播放
-        this.$refs.player.pause()
-      }
-    }
+        //换页停止播放并重新解析信息
+        this.isPlaying = false;
+        this.$refs.player.pause();
+        this.showDetail = false;
+      },
+    },
   }
 </script>
 
 <style lang="less" scoped>
   @import "../../assets/less/params";
 
-  @musicWidth: @mainWidth*0.4; //视频宽度
-
+  @musicWidth: @mainWidth*0.4; //音频播放器宽度
+  @musicHeight: @mainRatio*140px; //音频播放器高度
   .player {
     position: relative;
     display: flex;
     width: @musicWidth;
-    height: @mainRatio*140px;
+    height: @musicHeight;
     border-radius: 8px;
     background-color: #F1F3F4;
     box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12),
@@ -103,42 +141,80 @@
 
     .player-disk {
       box-sizing: border-box;
-      max-width: 140px;
-      flex: 1 0 140px;
-      padding: 10px;
+      max-width: @musicHeight;
+      flex: 1 0 @musicHeight;
+      padding: @mainRatio*10px;
     }
 
     .main-area {
-      width: 100%;
+      flex: 1;
       position: relative;
+      box-sizing: border-box;
+      width: (@musicWidth)-@musicHeight;
 
-      .info {
-        height: 50px;
-        /*background-color: skyblue;*/
-        padding: 12px 30px;
-        line-height: 28px;
+      .audio-container {
+        width: 100%;
+        position: relative;
+        top: 100%;
+        transform: translateY(-120%);
 
-        .title {
-          /*background-color: yellow;*/
-          overflow: hidden;
-          white-space: nowrap;
-          text-overflow: ellipsis;
-          margin-bottom: 5px;
+        audio {
+          width: 100%;
         }
 
-        .artist {
-          font-size: 14px;
-          overflow: hidden;
-          white-space: nowrap;
-          text-overflow: ellipsis;
+        //基本信息
+        .info {
+          width: 100%;
+          box-sizing: border-box;
+          padding: 0 @mainRatio*30px;
+          line-height: @mainRatio*28px;
+
+          position: absolute;
+          bottom: 100%;
+
+          transition: all 0.4s ease;
+
+          .title {
+            margin-top: @mainRatio*10px;
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: @mainRatio*5px;
+          }
+
+          .artist {
+            width: 100%;
+            font-size: @mainRatio*14px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+
+            &:before {
+              content: '—— ';
+            }
+          }
+
+          .file-path {
+            width: 100%;
+            font-size: @mainRatio*14px;
+
+            &:before {
+              content: 'file : ';
+            }
+          }
+        }
+
+        //详细信息
+        .info-detail {
+          z-index: 99;
+          border-radius: 8px 8px 0 0;
+          opacity: 0.9;
+          background-color: #F1F3F4;
+          word-break: break-all;
+          white-space: pre-wrap;
+          box-shadow: 4px 0 4px 0 rgba(0, 0, 0, 0.05),
+          4px 0 4px 0 rgba(95, 23, 101, 0.05);
         }
       }
-    }
-
-    audio {
-      position: absolute;
-      width: 100%;
-      bottom: 10px;
     }
   }
 

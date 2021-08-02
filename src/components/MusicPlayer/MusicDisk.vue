@@ -1,28 +1,39 @@
 <template>
   <div class="disk" :class="{'disk-playing':isPlaying}">
-    <div class="disk-cover"
-         :style="{backgroundImage:coverUrl?`url(${coverUrl})`:''}"
-    ></div>
+    <div class="disk-cover">
+      <img :src="coverImg" alt="test">
+    </div>
   </div>
 </template>
 
 <script>
+  import diskImg from '../../assets/media/img/disk.jpg'
+
   export default {
     name: "MusicDisk",
     props: {
-      isPlaying: {required: true},
+      isPlaying: {
+        type: Boolean,
+        required: true
+      },
       coverUrl: {
-        default() {
-          return ''
-        }
+        type: String,
+        default: ''
       }
     },
+    computed: {
+      //封面图片
+      coverImg() {
+        return this.coverUrl ? this.coverUrl : diskImg
+      }
+    }
   }
 </script>
 
 <style lang="less" scoped>
   //唱片
   .disk {
+    z-index: 999;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2),
     0 10px 10px rgba(95, 23, 101, 0.3);
     position: relative;
@@ -36,7 +47,7 @@
 
     transition: all 0.6s ease;
 
-    //唱片封面
+    //唱片覆盖封面
     .disk-cover {
       position: absolute;
       top: -10px;
@@ -46,6 +57,10 @@
       background-image: radial-gradient(circle, #444 0%, #333 100%);
       background-size: cover;
       background-position: center;
+
+      img {
+        width: 100%;
+      }
     }
 
     //唱片内圆
