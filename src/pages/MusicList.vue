@@ -32,8 +32,9 @@
       //----显示资源列表
       musicList() {
         const {start, end} = this
-        return musicPath.slice(start, end).map(pathObj => {
-          let {path, title, artist, coverUrl} = pathObj
+        return musicPath.slice(start, end).map(objStr => {
+          //字符串转对象解构
+          let {path, title, artist, coverUrl} = JSON.parse(objStr)
           //截取文件名去后缀
           if (!title) {
             const pathArr = path.split('/');
