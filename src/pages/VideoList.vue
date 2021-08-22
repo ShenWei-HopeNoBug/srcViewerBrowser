@@ -3,6 +3,7 @@
     <li v-for="(videoObj,index) in videoList" :key="'video_'+index">
       <VideoItem :options="videoObj.options"
                  :path="videoObj.path"
+                 :title="videoObj.title"
                  :_id="videoObj._id"
       />
     </li>
@@ -31,12 +32,15 @@
       videoList() {
         const {start, end} = this
         return videoPath.slice(start, end).map((path, index) => {
+          let title = path;
           //是否超出大小范围
           if (path.startsWith('#')) {
+            title = path.slice(1);
             path = outSizeVideo;
           }
           return {
             path,
+            title,
             _id: `【${start + index + 1}】`,
           }
         })

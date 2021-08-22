@@ -8,10 +8,10 @@
     <div class="video-info">
       <div class="info-general">
         <span>{{_id}}</span>
-        <span>{{title}}</span>
+        <span>{{titleShow}}</span>
       </div>
       <div class="info-details">
-        <span>{{path}}</span>
+        <span>{{title}}</span>
         <div class="tri">
           <div class="tri-out"></div>
           <div class="tri-in"></div>
@@ -48,14 +48,13 @@
         type: String,
         required: true
       },
+      title: {
+        type: String,
+        required: true
+      },
       _id: {
         type: String,
         required: true
-      }
-    },
-    data() {
-      return {
-        title: '', //短标题(文件名)
       }
     },
     methods: {
@@ -64,6 +63,10 @@
     computed: {
       ...mapState('routeData', ['playingSum']),
       ...mapState('pageData', ['start']),
+      titleShow(){
+        const titleArr = this.title.split('/');
+        return  titleArr[titleArr.length - 1];
+      }
     },
     watch: {
       //监视传入的path是否变化
@@ -74,14 +77,14 @@
         ])
       },
       //监视是否换页码
-      start(){
-        const pathArr = this.path.split('/');
-        this.title = pathArr[pathArr.length - 1];
-      }
+      // start() {
+      //   const pathArr = this.path.split('/');
+      //   this.title = pathArr[pathArr.length - 1];
+      // }
     },
     mounted() {
-      const pathArr = this.path.split('/');
-      this.title = pathArr[pathArr.length - 1];
+      // const pathArr = this.path.split('/');
+      // this.title = pathArr[pathArr.length - 1];
       //默认配置
       const defaultOptions = {
         preload: 'auto',
