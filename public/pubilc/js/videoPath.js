@@ -1,7 +1,7 @@
 const videoPath=[
   "../../assets/media/img/run1.gif",
   "#../../assets/media/img/run2.gif",
-  "../../assets/media/img/run3.gif",
+  "../../assets/media/img/哈哈3.gif",
   "../../assets/media/img/run4.gif",
   "../../assets/media/img/run5.gif",
   "../../assets/media/img/run6.gif",

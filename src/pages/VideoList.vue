@@ -41,7 +41,7 @@
           return {
             path,
             title,
-            _id: `【${start + index + 1}】`,
+            _id: `(${start + index + 1})`,
           }
         })
       },
